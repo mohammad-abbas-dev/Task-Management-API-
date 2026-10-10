@@ -4,13 +4,38 @@ import { db } from "../server.js";
 
 taskRouter.get("/", async (req, res, next) => {
   try {
+
     let completed = req.query.completed
     let project_id = req.query.project_id
     let assigned_to = req.query.assigned_to
-    let filters = [completed, project_id, assigned_to]
-    let results = await db.query("SELECT * FROM tasks");
-    let filteredResults = await db.query("SELECT * FROM tasks WHERE $1 AND  $2 AND $3")
-    res.json(filteredResults.rows);
+    let pickingConditions = []
+    let dollarValues = []
+
+    if (completed !== undefined) {
+      dollarValues.push(completed)
+      pickingConditions.push(`completed=$${dollarValues.length}`)
+    }
+    if (project_id) {
+      dollarValues.push(project_id)
+      pickingConditions.push(`project_id=$${dollarValues.length}`)
+    }
+    if (assigned_to) {
+      dollarValues.push(assigned_to)
+      pickingConditions.push(`assigned_to=$${dollarValues.length}`)
+    }
+    let results
+    if (completed !== undefined || project_id || assigned_to) {
+      results = await db.query("SELECT * FROM tasks WHERE " + pickingConditions.join(" AND "), dollarValues)
+    } else {
+      results = await db.query("SELECT * FROM tasks")
+    }
+    if(results.rows.length!==0){
+    res.json(results.rows);
+    }else{
+       let error = new Error("item not found");
+      error.status = 404;
+      return next(error);
+    }
   } catch (err) {
     next(err);
   }
@@ -29,7 +54,7 @@ taskRouter.get("/:id", async (req, res, next) => {
       res.json(results.rows);
     } else {
       let error = new Error("item not found");
-      error.status = 400;
+      error.status = 404;
       return next(error);
     }
   } catch (err) {
