@@ -10,11 +10,11 @@ let pass = process.env.pass
 const PORT = process.env.PORT || 3000;
 
 export let db = new Pool({
-  user: "postgres",
-  database: "postgres3",
-  host: "localhost",
-  password: pass,
-  port: 5123,
+  // user: "postgres",
+  // database: "postgres3",
+  // host: "localhost",
+  // password: pass,
+  // port: 5123,
   connectionString: process.env.DATABASE_URL
 });
 server.use(express.json())
