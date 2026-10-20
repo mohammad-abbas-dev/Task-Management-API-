@@ -15,6 +15,7 @@ export let db = new Pool({
   host: "localhost",
   password: pass,
   port: 5123,
+  connectionString: process.env.DATABASE_URL
 });
 server.use(express.json())
 server.get("/",(req,res)=>{
