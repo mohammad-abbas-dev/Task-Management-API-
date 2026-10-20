@@ -17,6 +17,9 @@ export let db = new Pool({
   port: 5123,
 });
 server.use(express.json())
+server.get("/",(req,res)=>{
+  res.send("welcome to home page")
+})
 server.use("/users", userRouter);
 server.use("/projects", projectRouter);
 server.use("/tasks", taskRouter);
