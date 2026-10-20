@@ -7,6 +7,7 @@ import notFound from './middleware/notFound.js'
 import taskRouter from "./routes/taskRoutes.js";
 let server = express();
 let pass = process.env.pass
+const PORT = process.env.PORT || 3000;
 
 export let db = new Pool({
   user: "postgres",
@@ -24,6 +25,6 @@ server.use("/tasks", taskRouter);
 server.use(notFound);
 server.use(errorHandler);
 
-server.listen(3000, () => {
-  console.log("server is running");
+server.listen(PORT, () => {
+  console.log(`server is running on port ${PORT}`);
 });
